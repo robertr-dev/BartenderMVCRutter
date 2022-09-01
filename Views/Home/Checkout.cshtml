@@ -1,0 +1,79 @@
+﻿@model BartenderMVCRutter.Models.Order
+
+@{
+    ViewData["Title"] = "Checkout";
+}
+<h1>@ViewData["Title"]</h1>
+
+<p>Review your order to make sure it's correct.</p>
+<p>
+    <h3>Your Order</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Drink
+                </th>
+                <th>
+                    Quantity
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                List<String> cart_items = new List<String>(TempData.Keys);
+            }
+            @if (cart_items.Count != 0)
+            {
+                foreach (var cart_item in cart_items)
+                {
+                    int quantity = (int)TempData[cart_item];
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => cart_item)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => quantity)
+                        </td>
+                    </tr>
+                }
+            }
+            else {
+                <tr><td>No items in cart!</td><td></td></tr>
+            }
+        </tbody>
+    </table>
+    <form method="post" asp-action="CreateOrder" asp-controller="Orders">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <input type="hidden" asp-for="OrderDate" value=DateTime.Now />
+                <label asp-for="Customer"></label>
+                <input asp-for="Customer" />
+                <span asp-validation-for="Customer" class="text-danger"></span>
+                @{
+                    string MyDictionaryToJson(Dictionary<String, int> dict)
+                    {
+                        var entries = dict.Select(d =>
+                        string.Format("\"{0}\": [{1}]", d.Key, string.Join(",", d.Value)));
+                        return "{" + string.Join(",", entries) + "}";
+                    }
+
+                    Dictionary<String, int> temp_dict = new Dictionary<String, int>();
+                    List<String> drink_names = new(TempData.Keys);
+                    foreach(var drink in drink_names) {
+                        temp_dict[drink] = (int)TempData[drink];
+                    }
+                    String order_items_json = MyDictionaryToJson(temp_dict);
+                }
+                <input type="hidden" asp-for="OrderItems" value="@order_items_json" />
+                <div class="form-group">
+                    <input type="submit" value="Complete Order" />
+                </div>
+            </div>
+    </form>
+    @using (Html.BeginForm("ClearCart", "Home"))
+    {
+        <br />
+        <input type="submit" value="Back to Menu" onclick="location.href='@Url.Action("Index", "Home")'">
+    }
+</p>

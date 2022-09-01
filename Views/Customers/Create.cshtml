@@ -1,0 +1,48 @@
+﻿@model BartenderMVCRutter.Models.Customer
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Customer</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="CustomerName" class="control-label"></label>
+                <input asp-for="CustomerName" class="form-control" />
+                <span asp-validation-for="CustomerName" class="text-danger"></span>
+                @{
+                    string MyDictionaryToJson(Dictionary<String, int> dict)
+                    {
+                        var entries = dict.Select(d =>
+                        string.Format("\"{0}\": [{1}]", d.Key, string.Join(",", d.Value)));
+                        return "{" + string.Join(",", entries) + "}";
+                    }
+
+                    Dictionary<String, int> temp_dict = new Dictionary<String, int>();
+                    List<String> drink_names = new(TempData.Keys);
+                    foreach(var drink in drink_names) {
+                        temp_dict[drink] = (int)TempData[drink];
+                    }
+                    String order_items_json = MyDictionaryToJson(temp_dict);
+                }
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

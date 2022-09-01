@@ -1,0 +1,43 @@
+﻿@model IEnumerable<BartenderMVCRutter.Models.Order>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Order Queue</h1>
+
+<p>
+    Most recent orders are shown first.
+</p>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Date & Time
+                </th>
+                <th>
+                    Customer
+                </th>
+                <th>
+                    Item(s) Ordered
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in Model) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OrderDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OrderItems)
+                </td>
+                <td>
+                    <input type="checkbox" id=@Html.DisplayFor(modelItem => item.OrderID)>
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>

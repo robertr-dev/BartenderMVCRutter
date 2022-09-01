@@ -1,0 +1,96 @@
+﻿@model IEnumerable<BartenderMVCRutter.Models.Drink>
+
+@{
+    ViewData["Title"] = "Cocktail Menu";
+}
+<h1>@ViewData["Title"]</h1>
+
+<p>Select drink(s) you'd like and add them to your cart.</p>
+<p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Description
+                </th>
+                <th>
+                    Price
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if(Model != null) {
+                @foreach (var item in Model)
+                {
+                    @using (Html.BeginForm())
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DrinkName)
+                                <input type="hidden" name="drink" value="@Html.DisplayFor(modelItem => item.DrinkName)">
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DrinkDesc)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DrinkPrice)
+                            </td>
+                            <td>
+                                <input type="submit" id="submit_form" name="submit_form" value="Add to Cart">
+                            </td>
+                        </tr>
+                    }
+                }
+            }
+        </tbody>
+    </table>
+
+    <h1>Your Cart</h1>
+    <p>When you're happy with your order, click the Checkout button.</p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Drink
+                </th>
+                <th>
+                    Quantity
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                List<String> cart_items = new List<String>(TempData.Keys);
+            }
+            @if (cart_items.Count != 0)
+            {
+                foreach (var cart_item in cart_items)
+                {
+                    int quantity = (int)TempData[cart_item];
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => cart_item)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => quantity)
+                        </td>
+                    </tr>
+                }
+            }
+            else {
+                <tr><td>No items in cart!</td><td></td></tr>
+            }
+        </tbody>
+    </table>
+    <input type="button" value="Checkout" onclick="location.href='@Url.Action("Checkout", "Home")'">
+
+    @using (Html.BeginForm("ClearCart", "Home"))
+    {
+        <br />
+        <input type="submit" value="Clear Cart" onclick="location.href='@Url.Action("ClearCart", "Home")'">
+    }
+</p>
